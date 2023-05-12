@@ -2,8 +2,10 @@ package ru.bit66.catalogfootballplayers.entitites;
 
 import jakarta.persistence.*;
 import lombok.*;
+import ru.bit66.catalogfootballplayers.enums.Country;
+import ru.bit66.catalogfootballplayers.enums.Gender;
 
-import java.util.Date;
+import java.sql.Date;
 
 @Getter
 @Setter
@@ -11,7 +13,7 @@ import java.util.Date;
 @NoArgsConstructor
 @ToString
 @Entity
-@Table(name = "footballer")
+@Table(name = "footballers")
 public class Footballer {
 
     @Id
@@ -19,8 +21,14 @@ public class Footballer {
     private Long id;
     private String firstName;
     private String lastName;
-    private String gender;
     private Date birthDate;
-    private String teamName;
-    private String country;
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
+    @Enumerated(EnumType.STRING)
+    private Country country;
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.DETACH,
+            CascadeType.REFRESH, CascadeType.MERGE},
+            fetch = FetchType.EAGER)
+    @JoinColumn(name = "team_id")
+    private FootballTeam team;
 }

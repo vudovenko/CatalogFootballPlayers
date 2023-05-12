@@ -3,6 +3,8 @@ package ru.bit66.catalogfootballplayers.entitites;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -16,4 +18,7 @@ public class FootballTeam {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    @OneToMany(mappedBy = "team", fetch = FetchType.EAGER)
+    private List<Footballer> footballers;
+
 }

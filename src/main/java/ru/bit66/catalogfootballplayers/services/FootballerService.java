@@ -35,7 +35,7 @@ public class FootballerService {
             updatedFootballer.setLastName(footballer.getLastName());
             updatedFootballer.setGender(footballer.getGender());
             updatedFootballer.setBirthDate(footballer.getBirthDate());
-            updatedFootballer.setTeamName(footballer.getTeamName());
+            updatedFootballer.setTeam(footballer.getTeam());
             updatedFootballer.setCountry(footballer.getCountry());
             return footballerRepository.save(updatedFootballer);
         }

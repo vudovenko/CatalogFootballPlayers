@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Adding footballers</title>
+</head>
+<body>
+<form th:action="@{/footballers/addNewFootballer}" method="post" th:object="${footballer}">
+    <label> Имя: <input type="text" name="firstname"
+                            th:field="*{firstName}"/> </label><br>
+    <label> Фамилия: <input type="text" name="lastname"
+                            th:field="*{lastName}"/> </label><br>
+    <label> Пол:
+        <select name="gender" th:field="*{gender}">
+            <option th:each="gender : ${T(ru.bit66.catalogfootballplayers.enums.Gender).values()}"
+                            th:value="${gender}" th:text="${gender.getCurrentGender()}"></option>
+        </select>
+    </label><br>
+    <label> Дара рождения: <input type="date" name="birthdate"
+                            th:field="*{birthDate}"/> </label><br>
+    <label> Название команды:
+        <select name="team" th:field="*{team.id}">
+            <option th:each="team : ${footballTeams}"
+                            th:value="${team.id}" th:text="${team.name}"></option>
+        </select>
+    </label><br>
+    <label> Страна:
+        <select name="country" th:field="*{country}">
+            <option th:each="countryName : ${T(ru.bit66.catalogfootballplayers.enums.Country).values()}"
+                            th:value="${countryName}" th:text="${countryName.getCurrentCountry()}"></option>
+        </select>
+    </label><br>
+    <label><input type="submit" value="Добавить пользователя"/></label><br>
+</form>
+</body>
+</html>

@@ -19,7 +19,10 @@ public class FootballTeamService {
     }
 
     public FootballTeam saveFootballTeam(FootballTeam footballTeam) {
-        return footballTeamRepository.save(footballTeam);
+        if (!doesCommandExist(footballTeam)) {
+            return footballTeamRepository.save(footballTeam);
+        }
+        return null; // todo создать исключение существования команды
     }
 
     public List<FootballTeam> getAllFootballTeams() {
@@ -41,5 +44,9 @@ public class FootballTeamService {
         }
 
         return null; // todo добавить исключение ненайденной команды
+    }
+
+    public Boolean doesCommandExist(FootballTeam footballTeam) {
+        return footballTeamRepository.existsByName(footballTeam.getName());
     }
 }
