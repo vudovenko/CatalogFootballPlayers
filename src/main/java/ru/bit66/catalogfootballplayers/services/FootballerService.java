@@ -2,9 +2,11 @@ package ru.bit66.catalogfootballplayers.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.bit66.catalogfootballplayers.entitites.FootballTeam;
 import ru.bit66.catalogfootballplayers.entitites.Footballer;
 import ru.bit66.catalogfootballplayers.repositories.FootballerRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,7 +20,19 @@ public class FootballerService {
         this.footballerRepository = footballerRepository;
     }
 
-    public Footballer saveFootballer(Footballer footballer) {
+    public Footballer saveFootballer(Footballer footballer,
+                                     FootballTeamService footballTeamService) {
+        FootballTeam footballTeam = footballer.getTeam();
+        if (footballTeam == null) {
+            footballTeam = new FootballTeam();
+            footballTeam.setName(footballer.getNewEnteredTeam());
+            footballTeam.setFootballers(new ArrayList<>());
+            footballTeamService.saveFootballTeam(footballTeam);
+        } else {
+            footballTeam = footballTeamService
+                    .getFootballTeamById(footballer.getTeam().getId());
+        }
+        footballer.setTeam(footballTeam);
         return footballerRepository.save(footballer);
     }
 

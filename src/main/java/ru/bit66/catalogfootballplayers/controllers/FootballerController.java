@@ -33,9 +33,7 @@ public class FootballerController {
 
     @PostMapping("/addNewFootballer")
     public String addNewFootballer(Footballer footballer) {
-        footballer.setTeam(footballTeamService
-                .getFootballTeamById(footballer.getTeam().getId()));
-        footballerService.saveFootballer(footballer);
+        footballerService.saveFootballer(footballer, footballTeamService);
         return "redirect:/footballers";
     }
 }

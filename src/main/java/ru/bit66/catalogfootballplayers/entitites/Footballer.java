@@ -31,4 +31,6 @@ public class Footballer {
             fetch = FetchType.EAGER)
     @JoinColumn(name = "team_id")
     private FootballTeam team;
+    @Transient
+    private String newEnteredTeam;
 }
