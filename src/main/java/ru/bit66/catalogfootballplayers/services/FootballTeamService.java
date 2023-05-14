@@ -3,6 +3,7 @@ package ru.bit66.catalogfootballplayers.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.bit66.catalogfootballplayers.entitites.FootballTeam;
+import ru.bit66.catalogfootballplayers.exceptions.FootballTeamNotFoundException;
 import ru.bit66.catalogfootballplayers.repositories.FootballTeamRepository;
 
 import java.util.List;
@@ -18,35 +19,21 @@ public class FootballTeamService {
         this.footballTeamRepository = footballTeamRepository;
     }
 
-    public FootballTeam saveFootballTeam(FootballTeam footballTeam) {
-        if (!doesCommandExist(footballTeam)) {
-            return footballTeamRepository.save(footballTeam);
+    public void saveFootballTeam(FootballTeam footballTeam) {
+        if (!footballTeamRepository.existsByName(footballTeam.getName())) {
+            footballTeamRepository.save(footballTeam);
         }
-        return null; // todo создать исключение существования команды
     }
 
     public List<FootballTeam> getAllFootballTeams() {
         return footballTeamRepository.findAll();
     }
 
-    public FootballTeam getFootballTeamById(Long id) {
-        return footballTeamRepository.findById(id).orElse(null);
-        // todo добавить исключение ненайденной команды
-    }
-
-    public FootballTeam updateFootballTeam(FootballTeam footballTeam) {
-        Optional<FootballTeam> existingFootballTeam
-                = footballTeamRepository.findById(footballTeam.getId());
-        if (existingFootballTeam.isPresent()) {
-            FootballTeam updatedFootballTeam = existingFootballTeam.get();
-            updatedFootballTeam.setName(existingFootballTeam.get().getName());
-            return footballTeamRepository.save(updatedFootballTeam);
+    public FootballTeam getFootballTeamById(Long id) throws FootballTeamNotFoundException {
+        Optional<FootballTeam> footballTeam = footballTeamRepository.findById(id);
+        if (footballTeam.isPresent()) {
+            return footballTeam.get();
         }
-
-        return null; // todo добавить исключение ненайденной команды
-    }
-
-    public Boolean doesCommandExist(FootballTeam footballTeam) {
-        return footballTeamRepository.existsByName(footballTeam.getName());
+        throw new FootballTeamNotFoundException("Команда не найдена!");
     }
 }

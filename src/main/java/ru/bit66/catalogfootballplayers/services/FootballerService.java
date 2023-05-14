@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.bit66.catalogfootballplayers.entitites.FootballTeam;
 import ru.bit66.catalogfootballplayers.entitites.Footballer;
+import ru.bit66.catalogfootballplayers.exceptions.FootballPlayerNotFoundException;
+import ru.bit66.catalogfootballplayers.exceptions.FootballTeamNotFoundException;
 import ru.bit66.catalogfootballplayers.repositories.FootballerRepository;
 
 import java.util.List;
@@ -20,7 +22,8 @@ public class FootballerService {
     }
 
     public void saveFootballer(Footballer footballer,
-                               FootballTeamService footballTeamService) {
+                               FootballTeamService footballTeamService)
+            throws FootballPlayerNotFoundException, FootballTeamNotFoundException {
         FootballTeam footballTeam = getOrCreateFootballTeam(footballer, footballTeamService);
         footballer.setTeam(footballTeam);
         if (footballer.getId() != null) {
@@ -31,7 +34,8 @@ public class FootballerService {
     }
 
     private static FootballTeam getOrCreateFootballTeam(Footballer footballer,
-                                                        FootballTeamService footballTeamService) {
+                                                        FootballTeamService footballTeamService)
+                                                        throws FootballTeamNotFoundException {
         FootballTeam footballTeam = footballer.getTeam();
         if (footballTeam == null) {
             footballTeam = createNewTeam(footballer, footballTeamService);
@@ -55,7 +59,7 @@ public class FootballerService {
         return footballerRepository.findAll();
     }
 
-    public void updateFootballer(Footballer footballer) {
+    public void updateFootballer(Footballer footballer) throws FootballPlayerNotFoundException {
         Optional<Footballer> existingFootballer
                 = footballerRepository.findById(footballer.getId());
         if (existingFootballer.isPresent()) {
@@ -67,11 +71,16 @@ public class FootballerService {
             updatedFootballer.setTeam(footballer.getTeam());
             updatedFootballer.setCountry(footballer.getCountry());
             footballerRepository.save(updatedFootballer);
+            return;
         }
+        throw new FootballPlayerNotFoundException("Футболист не найден!");
     }
 
-    public Footballer getFootballerById(Long id) {
-        return footballerRepository.findById(id).orElse(null);
-        // todo исключение при отсутствии футболиста
+    public Footballer getFootballerById(Long id) throws FootballPlayerNotFoundException {
+        Optional<Footballer> footballer = footballerRepository.findById(id);
+        if (footballer.isPresent()) {
+            return footballer.get();
+        }
+        throw new FootballPlayerNotFoundException("Футболист не найден!");
     }
 }

@@ -3,11 +3,10 @@ package ru.bit66.catalogfootballplayers.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import ru.bit66.catalogfootballplayers.entitites.Footballer;
+import ru.bit66.catalogfootballplayers.exceptions.FootballPlayerNotFoundException;
+import ru.bit66.catalogfootballplayers.exceptions.FootballTeamNotFoundException;
 import ru.bit66.catalogfootballplayers.services.FootballTeamService;
 import ru.bit66.catalogfootballplayers.services.FootballerService;
 
@@ -26,14 +25,17 @@ public class FootballerController {
     }
 
     @GetMapping
-    public String pageForAddingFootballer(Model model) {
+    public String pageForAddingFootballer(@RequestParam(value = "message", required = false)
+                                          String message, Model model) {
+        model.addAttribute("message", message);
         model.addAttribute("footballer", new Footballer());
         model.addAttribute("footballTeams", footballTeamService.getAllFootballTeams());
         return "/addingFootballers";
     }
 
     @PostMapping("/saveFootballer")
-    public String addNewFootballer(Footballer footballer) {
+    public String addNewFootballer(Footballer footballer)
+            throws FootballPlayerNotFoundException, FootballTeamNotFoundException {
         footballerService.saveFootballer(footballer, footballTeamService);
         return "redirect:/footballers";
     }
@@ -48,7 +50,8 @@ public class FootballerController {
     }
 
     @GetMapping("/edit/{id}")
-    public String editFootballer(Model model, @PathVariable("id") Long id) {
+    public String editFootballer(Model model, @PathVariable("id") Long id)
+            throws FootballPlayerNotFoundException {
         Footballer footballer = footballerService.getFootballerById(id);
         model.addAttribute("footballer",
                 footballer);

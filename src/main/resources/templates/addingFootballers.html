@@ -23,6 +23,7 @@
     </script>
 </head>
 <body>
+<a th:text="${message}"></a>
 <form th:action="@{/footballers/saveFootballer}" method="post" th:object="${footballer}">
     <label><input type="hidden" th:field="*{id}" id="id"></label>
     <label> Имя: <input type="text" name="firstname" th:field="*{firstName}"/> </label><br>
