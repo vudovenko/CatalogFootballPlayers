@@ -14,13 +14,17 @@
         function handleTeamInput() {
             var teamSelect = document.getElementById("teamSelect");
             var teamInput = document.getElementById("teamInput");
-
+            if (teamSelect.value !== "") {
+                teamSelect.value = "";
+                teamSelect.disabled = true;
+            }
             teamSelect.disabled = teamInput.value !== "";
         }
     </script>
 </head>
 <body>
-<form th:action="@{/footballers/addNewFootballer}" method="post" th:object="${footballer}">
+<form th:action="@{/footballers/saveFootballer}" method="post" th:object="${footballer}">
+    <label><input type="hidden" th:field="*{id}" id="id"></label>
     <label> Имя: <input type="text" name="firstname" th:field="*{firstName}"/> </label><br>
     <label> Фамилия: <input type="text" name="lastname" th:field="*{lastName}"/> </label><br>
     <label> Пол:
@@ -31,10 +35,14 @@
     </label><br>
     <label> Дата рождения: <input type="date" name="birthdate" th:field="*{birthDate}"/> </label><br>
 
-    <label th:field="*{birthDate}"> Выберите команду:
+    <label th:field="*{team}"> Выберите команду:
         <select id="teamSelect" name="team" onchange="handleTeamSelection()">
+            <option th:value="${footballer.team.id}" th:if="${footballer.getTeam() != null}" th:text="${footballer.team.getName()}"></option>
             <option value="">Выберите команду</option>
-            <option th:each="team : ${footballTeams}" th:value="${team.id}" th:text="${team.name}"></option>
+            <option th:each="fTeam : ${footballTeams}" th:value="${fTeam.id}"
+                    th:if="${footballer.getTeam() == null
+                    || (footballer.getTeam() != null
+                    && footballer.team.getName() != fTeam.getName())}" th:text="${fTeam.name}"></option>
         </select>
     </label><br>
     <label> Или введите новую команду:
@@ -49,7 +57,7 @@
         </select>
     </label><br>
 
-    <label><input type="submit" value="Добавить пользователя"/></label><br>
+    <label><input type="submit" value="Сохранить пользователя"/></label><br>
 </form>
 <a th:href="@{/footballers/allFootballers}">Все футболисты</a>
 </body>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>All footballers</title>
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 100%
+    }
+
+    th, td {
+      border: 1px solid black;
+    }
+  </style>
+</head>
+<body>
+<h1>All footballers</h1>
+<table>
+  <thead>
+  <tr>
+    <th>First name</th>
+    <th>Last name</th>
+    <th>Birth day</th>
+    <th>Gender</th>
+    <th>Country</th>
+    <th>Team</th>
+    <th></th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="footballer : ${allFootballers}">
+    <td th:text="${footballer.firstName}"></td>
+    <td th:text="${footballer.lastName}"></td>
+    <td th:text="${footballer.birthDate}"></td>
+    <td th:text="${footballer.gender}"></td>
+    <td th:text="${footballer.country.getCurrentCountry()}"></td>
+    <td th:text="${footballer.team.getName()}"></td>
+    <td>
+      <a th:href="@{/footballers/edit/{id}(id=${footballer.id})}">
+        Редактировать данные
+      </a>
+    </td>
+  </tr>
+  </tbody>
+</table>
+<a th:href="@{/footballers}">Все футболисты</a>
+</body>
+</html>

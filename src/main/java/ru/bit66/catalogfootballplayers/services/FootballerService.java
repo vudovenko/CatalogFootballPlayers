@@ -6,7 +6,6 @@ import ru.bit66.catalogfootballplayers.entitites.FootballTeam;
 import ru.bit66.catalogfootballplayers.entitites.Footballer;
 import ru.bit66.catalogfootballplayers.repositories.FootballerRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,27 +19,43 @@ public class FootballerService {
         this.footballerRepository = footballerRepository;
     }
 
-    public Footballer saveFootballer(Footballer footballer,
-                                     FootballTeamService footballTeamService) {
+    public void saveFootballer(Footballer footballer,
+                               FootballTeamService footballTeamService) {
+        FootballTeam footballTeam = getOrCreateFootballTeam(footballer, footballTeamService);
+        footballer.setTeam(footballTeam);
+        if (footballer.getId() != null) {
+            updateFootballer(footballer);
+            return;
+        }
+        footballerRepository.save(footballer);
+    }
+
+    private static FootballTeam getOrCreateFootballTeam(Footballer footballer,
+                                                        FootballTeamService footballTeamService) {
         FootballTeam footballTeam = footballer.getTeam();
         if (footballTeam == null) {
-            footballTeam = new FootballTeam();
-            footballTeam.setName(footballer.getNewEnteredTeam());
-            footballTeam.setFootballers(new ArrayList<>());
-            footballTeamService.saveFootballTeam(footballTeam);
+            footballTeam = createNewTeam(footballer, footballTeamService);
         } else {
             footballTeam = footballTeamService
                     .getFootballTeamById(footballer.getTeam().getId());
         }
-        footballer.setTeam(footballTeam);
-        return footballerRepository.save(footballer);
+        return footballTeam;
+    }
+
+    private static FootballTeam createNewTeam(Footballer footballer,
+                                              FootballTeamService footballTeamService) {
+        FootballTeam footballTeam;
+        footballTeam = new FootballTeam();
+        footballTeam.setName(footballer.getNewEnteredTeam());
+        footballTeamService.saveFootballTeam(footballTeam);
+        return footballTeam;
     }
 
     public List<Footballer> getAllFootballers() {
         return footballerRepository.findAll();
     }
 
-    public Footballer updateFootballer(Footballer footballer) {
+    public void updateFootballer(Footballer footballer) {
         Optional<Footballer> existingFootballer
                 = footballerRepository.findById(footballer.getId());
         if (existingFootballer.isPresent()) {
@@ -51,8 +66,12 @@ public class FootballerService {
             updatedFootballer.setBirthDate(footballer.getBirthDate());
             updatedFootballer.setTeam(footballer.getTeam());
             updatedFootballer.setCountry(footballer.getCountry());
-            return footballerRepository.save(updatedFootballer);
+            footballerRepository.save(updatedFootballer);
         }
-        return null; // todo добавить исключение ненайденного футболиста
+    }
+
+    public Footballer getFootballerById(Long id) {
+        return footballerRepository.findById(id).orElse(null);
+        // todo исключение при отсутствии футболиста
     }
 }
