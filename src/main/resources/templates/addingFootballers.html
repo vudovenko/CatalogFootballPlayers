@@ -26,38 +26,71 @@
 <a th:text="${message}"></a>
 <form th:action="@{/footballers/saveFootballer}" method="post" th:object="${footballer}">
     <label><input type="hidden" th:field="*{id}" id="id"></label>
-    <label> Имя: <input type="text" name="firstname" th:field="*{firstName}"/> </label><br>
-    <label> Фамилия: <input type="text" name="lastname" th:field="*{lastName}"/> </label><br>
+    <label>
+        Имя: <input type="text" name="firstname" th:field="*{firstName}"/>
+        <a th:if="${#fields.hasErrors('firstName')}">
+            Имя должно быть от 2 до 30 символов и не состоять из пробелов!
+        </a>
+    </label><br>
+    <label>
+        Фамилия: <input type="text" name="lastname" th:field="*{lastName}"/>
+        <a th:if="${#fields.hasErrors('lastName')}">
+            Фамилия должна быть от 2 до 30 символов и не состоять из пробелов!
+        </a>
+    </label><br>
     <label> Пол:
         <select name="gender" th:field="*{gender}">
-            <option th:each="gender : ${T(ru.bit66.catalogfootballplayers.enums.Gender).values()}"
-                    th:value="${gender}" th:text="${gender.getCurrentGender()}"></option>
+            <option th:value="${footballer.gender}" th:if="${footballer.gender != null}"
+                    th:text="${footballer.gender.getCurrentGender()}"></option>
+            <option value="">Выберите пол</option>
+            <option th:each="fGender : ${T(ru.bit66.catalogfootballplayers.enums.Gender).values()}"
+                    th:value="${fGender}" th:if="${footballer.gender == null
+            || (footballer.gender != null
+            && footballer.gender.getCurrentGender() != fGender.getCurrentGender())}"
+                    th:text="${fGender.getCurrentGender()}"></option>
         </select>
+        <a th:if="${#fields.hasErrors('gender')}">
+            Пол не выбран!
+        </a>
     </label><br>
-    <label> Дата рождения: <input type="date" name="birthdate" th:field="*{birthDate}"/> </label><br>
-
+    <label>
+        Дата рождения: <input type="date" name="birthdate" th:field="*{birthDate}"/>
+        <a th:if="${#fields.hasErrors('birthDate')}">
+            Дата рождения не выбрана!
+        </a>
+    </label><br>
+    <label> Страна:
+        <select name="country" th:field="*{country}">
+            <option th:value="${footballer.country}" th:if="${footballer.country != null}"
+                    th:text="${footballer.country.getCurrentCountry()}"></option>
+            <option value="">Выберите страну</option>
+            <option th:each="fCountry : ${T(ru.bit66.catalogfootballplayers.enums.Country).values()}"
+                    th:value="${fCountry}" th:if="${footballer.country == null
+            || (footballer.country != null
+            && footballer.country.getCurrentCountry() != fCountry.getCurrentCountry())}"
+                    th:text="${fCountry.getCurrentCountry()}"></option>
+        </select>
+        <a th:if="${#fields.hasErrors('country')}">
+            Страна не выбрана!
+        </a>
+    </label><br>
     <label th:field="*{team}"> Выберите команду:
         <select id="teamSelect" name="team" onchange="handleTeamSelection()">
-            <option th:value="${footballer.team.id}" th:if="${footballer.getTeam() != null}" th:text="${footballer.team.getName()}"></option>
+            <option th:value="${footballer.team.id}" th:if="${footballer.getTeam() != null}"
+                    th:text="${footballer.team.getName()}"></option>
             <option value="">Выберите команду</option>
             <option th:each="fTeam : ${footballTeams}" th:value="${fTeam.id}"
                     th:if="${footballer.getTeam() == null
                     || (footballer.getTeam() != null
                     && footballer.team.getName() != fTeam.getName())}" th:text="${fTeam.name}"></option>
         </select>
+        <a th:text="${teamMessage}"></a>
     </label><br>
     <label> Или введите новую команду:
         <input id="teamInput" type="text" name="teamInput"
                th:field="*{newEnteredTeam}" oninput="handleTeamInput()"/>
+        <a th:text="${teamMessage}"></a>
     </label><br>
-
-    <label> Страна:
-        <select name="country" th:field="*{country}">
-            <option th:each="countryName : ${T(ru.bit66.catalogfootballplayers.enums.Country).values()}"
-                    th:value="${countryName}" th:text="${countryName.getCurrentCountry()}"></option>
-        </select>
-    </label><br>
-
     <label><input type="submit" value="Сохранить пользователя"/></label><br>
 </form>
 <a th:href="@{/footballers/allFootballers}">Все футболисты</a>

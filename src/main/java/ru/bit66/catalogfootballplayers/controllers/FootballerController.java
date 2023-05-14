@@ -1,8 +1,10 @@
 package ru.bit66.catalogfootballplayers.controllers;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.bit66.catalogfootballplayers.entitites.Footballer;
 import ru.bit66.catalogfootballplayers.exceptions.FootballPlayerNotFoundException;
@@ -34,8 +36,19 @@ public class FootballerController {
     }
 
     @PostMapping("/saveFootballer")
-    public String addNewFootballer(Footballer footballer)
+    public String addNewFootballer(@Valid Footballer footballer,
+                                   BindingResult bindingResult, Model model)
             throws FootballPlayerNotFoundException, FootballTeamNotFoundException {
+        if (bindingResult.hasErrors()
+                || (footballer.getTeam() == null
+                && footballer.getNewEnteredTeam().equals(""))) {
+            model.addAttribute("footballer", footballer);
+            model.addAttribute("footballTeams", footballTeamService.getAllFootballTeams());
+            if (footballer.getTeam() == null && footballer.getNewEnteredTeam().equals("")) {
+                model.addAttribute("teamMessage", "Выберите команду!");
+            }
+            return "/addingFootballers";
+        }
         footballerService.saveFootballer(footballer, footballTeamService);
         return "redirect:/footballers";
     }
