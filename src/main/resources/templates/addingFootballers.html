@@ -29,13 +29,13 @@
     <label>
         Имя: <input type="text" name="firstname" th:field="*{firstName}"/>
         <a th:if="${#fields.hasErrors('firstName')}">
-            Имя должно быть от 2 до 30 символов и не состоять из пробелов!
+            Имя должно быть от 2 до 30 символов, не состоять целиком из пробелов, не содержать цифры!
         </a>
     </label><br>
     <label>
         Фамилия: <input type="text" name="lastname" th:field="*{lastName}"/>
         <a th:if="${#fields.hasErrors('lastName')}">
-            Фамилия должна быть от 2 до 30 символов и не состоять из пробелов!
+            Фамилия должна быть от 2 до 30 символов, не состоять целиком из пробелов, не содержать цифры!
         </a>
     </label><br>
     <label> Пол:
