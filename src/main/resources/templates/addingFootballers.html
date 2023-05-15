@@ -9,16 +9,19 @@
             var teamInput = document.getElementById("teamInput");
 
             teamInput.disabled = teamSelect.value !== "";
+            if (teamInput.disabled) {
+                teamInput.value = "";
+            }
         }
 
         function handleTeamInput() {
             var teamSelect = document.getElementById("teamSelect");
             var teamInput = document.getElementById("teamInput");
-            if (teamSelect.value !== "") {
-                teamSelect.value = "";
-                teamSelect.disabled = true;
-            }
+
             teamSelect.disabled = teamInput.value !== "";
+            if (teamSelect.disabled) {
+                teamSelect.value = "";
+            }
         }
     </script>
 </head>
