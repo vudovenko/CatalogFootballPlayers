@@ -36,4 +36,8 @@ public class FootballTeamService {
         }
         throw new FootballTeamNotFoundException("Команда не найдена!");
     }
+
+    public Boolean isThereTeamByName(String name) {
+        return footballTeamRepository.existsByName(name);
+    }
 }

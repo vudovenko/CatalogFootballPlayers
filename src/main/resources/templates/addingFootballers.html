@@ -90,6 +90,8 @@
         <input id="teamInput" type="text" name="teamInput"
                th:field="*{newEnteredTeam}" oninput="handleTeamInput()"/>
         <a th:text="${teamMessage}"></a>
+        <a th:text="${teamExistsMessage}"></a>
+        <a th:text="${spacesMessage}"></a>
     </label><br>
     <label><input type="submit" value="Сохранить пользователя"/></label><br>
 </form>

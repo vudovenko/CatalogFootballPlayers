@@ -40,13 +40,10 @@ public class FootballerController {
                                    BindingResult bindingResult, Model model)
             throws FootballPlayerNotFoundException, FootballTeamNotFoundException {
         if (bindingResult.hasErrors()
-                || (footballer.getTeam() == null
-                && footballer.getNewEnteredTeam().equals(""))) {
+                || footballerService.areConditionsSatisfied(footballer, footballTeamService)) {
             model.addAttribute("footballer", footballer);
             model.addAttribute("footballTeams", footballTeamService.getAllFootballTeams());
-            if (footballer.getTeam() == null && footballer.getNewEnteredTeam().equals("")) {
-                model.addAttribute("teamMessage", "Выберите команду!");
-            }
+            footballerService.addMessageToModel(footballer, footballTeamService, model);
             return "/addingFootballers";
         }
         footballerService.saveFootballer(footballer, footballTeamService);

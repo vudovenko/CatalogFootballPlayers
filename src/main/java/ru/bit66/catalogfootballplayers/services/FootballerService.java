@@ -2,6 +2,7 @@ package ru.bit66.catalogfootballplayers.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 import ru.bit66.catalogfootballplayers.entitites.FootballTeam;
 import ru.bit66.catalogfootballplayers.entitites.Footballer;
 import ru.bit66.catalogfootballplayers.exceptions.FootballPlayerNotFoundException;
@@ -82,5 +83,32 @@ public class FootballerService {
             return footballer.get();
         }
         throw new FootballPlayerNotFoundException("Футболист не найден!");
+    }
+
+    public Boolean areConditionsSatisfied(Footballer footballer, FootballTeamService footballTeamService) {
+        boolean firstCondition = footballer.getTeam() == null
+                && (footballer.getNewEnteredTeam() == null
+                || footballer.getNewEnteredTeam().equals(""));
+        boolean secondCondition = footballer.getNewEnteredTeam() != null
+                && !footballer.getNewEnteredTeam().equals("")
+                && footballTeamService.isThereTeamByName(footballer.getNewEnteredTeam());
+        boolean thirdCondition = footballer.getNewEnteredTeam() != null
+                && !footballer.getNewEnteredTeam().equals("")
+                && footballer.getNewEnteredTeam().matches("^\\s*$");
+        return firstCondition || secondCondition || thirdCondition;
+    }
+
+    public void addMessageToModel(Footballer footballer, FootballTeamService footballTeamService, Model model) {
+        if (footballer.getTeam() == null
+                && (footballer.getNewEnteredTeam() == null
+                || footballer.getNewEnteredTeam().equals(""))) {
+            model.addAttribute("teamMessage", "Выберите команду!");
+        } else if (footballer.getNewEnteredTeam() != null && !footballer.getNewEnteredTeam().equals("")) {
+            if (footballTeamService.isThereTeamByName(footballer.getNewEnteredTeam())) {
+                model.addAttribute("teamExistsMessage", "Такая команда уже существует!");
+            } else if (footballer.getNewEnteredTeam().matches("^\\s*$")) {
+                model.addAttribute("spacesMessage", "Имя команды не должно быть целиком из пробелов!");
+            }
+        }
     }
 }
