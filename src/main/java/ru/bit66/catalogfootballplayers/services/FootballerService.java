@@ -36,7 +36,7 @@ public class FootballerService {
 
     private static FootballTeam getOrCreateFootballTeam(Footballer footballer,
                                                         FootballTeamService footballTeamService)
-                                                        throws FootballTeamNotFoundException {
+            throws FootballTeamNotFoundException {
         FootballTeam footballTeam = footballer.getTeam();
         if (footballTeam == null) {
             footballTeam = createNewTeam(footballer, footballTeamService);
@@ -85,30 +85,23 @@ public class FootballerService {
         throw new FootballPlayerNotFoundException("Футболист не найден!");
     }
 
-    public Boolean areConditionsSatisfied(Footballer footballer, FootballTeamService footballTeamService) {
-        boolean firstCondition = footballer.getTeam() == null
-                && (footballer.getNewEnteredTeam() == null
-                || footballer.getNewEnteredTeam().equals(""));
-        boolean secondCondition = footballer.getNewEnteredTeam() != null
-                && !footballer.getNewEnteredTeam().equals("")
-                && footballTeamService.isThereTeamByName(footballer.getNewEnteredTeam());
-        boolean thirdCondition = footballer.getNewEnteredTeam() != null
-                && !footballer.getNewEnteredTeam().equals("")
-                && footballer.getNewEnteredTeam().matches("^\\s*$");
-        return firstCondition || secondCondition || thirdCondition;
-    }
-
-    public void addMessageToModel(Footballer footballer, FootballTeamService footballTeamService, Model model) {
+    public Boolean checkConditionsAndAddMessageToModel(Footballer footballer,
+                                                       FootballTeamService footballTeamService,
+                                                       Model model) {
         if (footballer.getTeam() == null
                 && (footballer.getNewEnteredTeam() == null
                 || footballer.getNewEnteredTeam().equals(""))) {
             model.addAttribute("teamMessage", "Выберите команду!");
+            return true;
         } else if (footballer.getNewEnteredTeam() != null && !footballer.getNewEnteredTeam().equals("")) {
             if (footballTeamService.isThereTeamByName(footballer.getNewEnteredTeam())) {
                 model.addAttribute("teamExistsMessage", "Такая команда уже существует!");
+                return true;
             } else if (footballer.getNewEnteredTeam().matches("^\\s*$")) {
                 model.addAttribute("spacesMessage", "Имя команды не должно быть целиком из пробелов!");
+                return true;
             }
         }
+        return false;
     }
 }

@@ -39,11 +39,11 @@ public class FootballerController {
     public String addNewFootballer(@Valid Footballer footballer,
                                    BindingResult bindingResult, Model model)
             throws FootballPlayerNotFoundException, FootballTeamNotFoundException {
-        if (bindingResult.hasErrors()
-                || footballerService.areConditionsSatisfied(footballer, footballTeamService)) {
+        if (footballerService
+                .checkConditionsAndAddMessageToModel(footballer, footballTeamService, model)
+                || bindingResult.hasErrors()) {
             model.addAttribute("footballer", footballer);
             model.addAttribute("footballTeams", footballTeamService.getAllFootballTeams());
-            footballerService.addMessageToModel(footballer, footballTeamService, model);
             return "/addingFootballers";
         }
         footballerService.saveFootballer(footballer, footballTeamService);
