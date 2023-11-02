@@ -24,7 +24,7 @@ public class Footballer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NotBlank
-    @Size(min = 2, max = 30)
+    @Size(min = 2, max = 30) // todo вывод именно той ошибки, которая указана в message
     @Pattern(regexp = "^[^0-9]*$", message = "Имя не должно содержать цифры")
     private String firstName;
     @NotBlank

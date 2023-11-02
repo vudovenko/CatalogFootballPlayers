@@ -1,6 +1,7 @@
 package ru.bit66.catalogfootballplayers.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import ru.bit66.catalogfootballplayers.entitites.FootballTeam;
@@ -16,10 +17,13 @@ import java.util.Optional;
 public class FootballerService {
 
     private final FootballerRepository footballerRepository;
+    private final SimpMessagingTemplate messagingTemplate;
 
     @Autowired
-    public FootballerService(FootballerRepository footballerRepository) {
+    public FootballerService(FootballerRepository footballerRepository,
+                            SimpMessagingTemplate messagingTemplate) {
         this.footballerRepository = footballerRepository;
+        this.messagingTemplate = messagingTemplate;
     }
 
     public void saveFootballer(Footballer footballer,
@@ -32,6 +36,7 @@ public class FootballerService {
             return;
         }
         footballerRepository.save(footballer);
+        messagingTemplate.convertAndSend("/topic/public", getAllFootballers());
     }
 
     private static FootballTeam getOrCreateFootballTeam(Footballer footballer,
@@ -72,6 +77,7 @@ public class FootballerService {
             updatedFootballer.setTeam(footballer.getTeam());
             updatedFootballer.setCountry(footballer.getCountry());
             footballerRepository.save(updatedFootballer);
+            messagingTemplate.convertAndSend("/topic/public", getAllFootballers());
             return;
         }
         throw new FootballPlayerNotFoundException("Футболист не найден!");
@@ -90,10 +96,10 @@ public class FootballerService {
                                                        Model model) {
         if (footballer.getTeam() == null
                 && (footballer.getNewEnteredTeam() == null
-                || footballer.getNewEnteredTeam().equals(""))) {
+                || footballer.getNewEnteredTeam().isEmpty())) {
             model.addAttribute("teamMessage", "Выберите команду!");
             return true;
-        } else if (footballer.getNewEnteredTeam() != null && !footballer.getNewEnteredTeam().equals("")) {
+        } else if (footballer.getNewEnteredTeam() != null && !footballer.getNewEnteredTeam().isEmpty()) {
             if (footballTeamService.isThereTeamByName(footballer.getNewEnteredTeam())) {
                 model.addAttribute("teamExistsMessage", "Такая команда уже существует!");
                 return true;

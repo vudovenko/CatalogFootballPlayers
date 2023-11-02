@@ -3,16 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>All footballers</title>
-  <style>
-    table {
-      border-collapse: collapse;
-      width: 100%
-    }
-
-    th, td {
-      border: 1px solid black;
-    }
-  </style>
+  <link rel="stylesheet" href="/css/tableStyle.css">
 </head>
 <body>
 <h1>All footballers</h1>
@@ -28,7 +19,7 @@
     <th></th>
   </tr>
   </thead>
-  <tbody>
+  <tbody id="footballers-data">
   <tr th:each="footballer : ${allFootballers}">
     <td th:text="${footballer.firstName}"></td>
     <td th:text="${footballer.lastName}"></td>
@@ -45,5 +36,8 @@
   </tbody>
 </table>
 <a th:href="@{/footballers}">Добавить футболиста</a>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<script src="/js/updatedFootballers.js"></script>
 </body>
 </html>
