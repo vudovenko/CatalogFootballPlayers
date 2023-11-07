@@ -80,7 +80,7 @@ public class FootballerService {
             messagingTemplate.convertAndSend("/topic/public", getAllFootballers());
             return;
         }
-        throw new FootballPlayerNotFoundException("Футболист не найден!");
+        throw new FootballPlayerNotFoundException("Football player not found!");
     }
 
     public Footballer getFootballerById(Long id) throws FootballPlayerNotFoundException {
@@ -88,7 +88,7 @@ public class FootballerService {
         if (footballer.isPresent()) {
             return footballer.get();
         }
-        throw new FootballPlayerNotFoundException("Футболист не найден!");
+        throw new FootballPlayerNotFoundException("Football player not found!");
     }
 
     public Boolean checkConditionsAndAddMessageToModel(Footballer footballer,

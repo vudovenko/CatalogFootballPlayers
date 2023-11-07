@@ -34,7 +34,7 @@ public class FootballTeamService {
         if (footballTeam.isPresent()) {
             return footballTeam.get();
         }
-        throw new FootballTeamNotFoundException("Команда не найдена!");
+        throw new FootballTeamNotFoundException("Team not found!");
     }
 
     public Boolean isThereTeamByName(String name) {
